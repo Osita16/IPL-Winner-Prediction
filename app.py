@@ -4,42 +4,53 @@ import pandas as pd
 import base64
 import random
 import os
+
 st.set_page_config(page_title="IPL Win Predictor", layout="wide")
 
-# --- 2. FIXED BACKGROUND LOADER ---
+# ---------------- BACKGROUND ----------------
 def get_base64(file_path):
     with open(file_path, "rb") as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
+        return base64.b64encode(f.read()).decode()
 
-# Ensure the file exists before trying to encode it
-if os.path.exists("stad.jpg"):
-    bin_str = get_base64("stad.jpg")
+bg_path = os.path.join(os.path.dirname(__file__), "stad.jpg")
+
+if os.path.exists(bg_path):
+    bin_str = get_base64(bg_path)
     st.markdown(f"""
         <style>
         .stApp {{
-            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)),
                               url("data:image/jpg;base64,{bin_str}");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }}
-        /* Fix for visibility */
-        h1, h2, h3, p, span, label, .stMetricValue {{
+        h1, h2, h3, p, span, label {{
             color: white !important;
         }}
-        /* Glass card effect for inputs */
         div[data-testid="stBlock"] {{
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }}
         </style>
-        """, unsafe_allow_html=True)
-else:
-    st.error("Error: 'stad.jpg' not found in the project folder!")
+    """, unsafe_allow_html=True)
+
+# ---------------- LOAD MODEL (FIXED) ----------------
+@st.cache_resource
+def load_model():
+    model_path = os.path.join(os.path.dirname(__file__), "pipe.pkl")
+
+    if not os.path.exists(model_path):
+        st.error("❌ pipe.pkl not found in repo")
+        st.stop()
+
+    with open(model_path, "rb") as f:
+        return pickle.load(f)
+
+pipe = load_model()
+
 # ---------------- LOGOS ----------------
 logos = {
     'Sunrisers Hyderabad': 'https://upload.wikimedia.org/wikipedia/en/8/81/Sunrisers_Hyderabad.svg',
@@ -52,10 +63,7 @@ logos = {
     'Delhi Capitals': 'https://upload.wikimedia.org/wikipedia/en/f/f5/Delhi_Capitals_Logo.svg'
 }
 
-# ---------------- LOAD MODEL ----------------
-pipe = pickle.load(open('pipe.pkl','rb'))
-
-# # ---------------- TITLE ----------------
+# ---------------- TITLE ----------------
 st.markdown("<h1 style='text-align:center;'>🏏 IPL Win Predictor</h1>", unsafe_allow_html=True)
 
 # ---------------- INPUT ----------------
@@ -86,6 +94,10 @@ predict = st.button("🚀 Predict")
 # ---------------- PREDICTION ----------------
 if predict:
 
+    if overs == 0:
+        st.error("Overs cannot be 0")
+        st.stop()
+
     runs_left = target - score
     balls_left = 120 - int(overs * 6)
     wickets_left = 10 - wickets
@@ -93,7 +105,7 @@ if predict:
     if score >= target or wickets >= 10:
         st.error("Match already finished!")
     else:
-        crr = score / overs if overs > 0 else 0
+        crr = score / overs
         rrr = (runs_left * 6) / balls_left if balls_left > 0 else 0
 
         input_df = pd.DataFrame({
@@ -111,7 +123,6 @@ if predict:
         result = pipe.predict_proba(input_df)
         win = result[0][1]
 
-        # ---------------- FIX LOGO VISIBILITY ----------------
         st.markdown("## 🏆 Result")
 
         col1, col2 = st.columns(2)
@@ -126,18 +137,17 @@ if predict:
             st.markdown(f"### {bowling_team}")
             st.metric("Win Chance", f"{round((1-win)*100)}%")
 
-        # ---------------- PROGRESS BAR ----------------
         st.progress(int(win * 100))
 
-        # ---------------- MATCH INSIGHTS ----------------
-        st.markdown("###  Match Insights")
+        # ---------------- INSIGHTS ----------------
+        st.markdown("### Match Insights")
 
         if rrr > 12:
-            st.warning(" High pressure chase!")
+            st.warning("High pressure chase!")
         elif rrr > 8:
-            st.info(" Balanced game")
+            st.info("Balanced game")
         else:
-            st.success(" Comfortable")
+            st.success("Comfortable")
 
         if wickets_left <= 3:
             st.error("⚠️ Few wickets left!")
@@ -155,7 +165,7 @@ if predict:
 
         wins = sum(simulate(runs_left, balls_left, wickets_left) for _ in range(100))
 
-        st.markdown(f"###  Simulation Win Chance: {wins}%")
+        st.markdown(f"### Simulation Win Chance: {wins}%")
 
         # ---------------- WHAT IF ----------------
         extra = st.slider("Next over runs?", 0, 30, 10)
@@ -168,9 +178,9 @@ CRR: {crr}
 RRR: {rrr}
 Simulation: {wins}%
 """
-        st.download_button(" Download Report", report)
+        st.download_button("Download Report", report)
 
         # ---------------- CELEBRATION ----------------
         if win > 0.7:
             st.balloons()
-            st.success(" Dominating position!")
+            st.success("Dominating position!")
