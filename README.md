@@ -28,7 +28,11 @@ Instead of just training a model, we took it further —
 ## 🖼️ Sneak Peek
 
 <p align="center">
-  <img src=""C:\Users\iamos\OneDrive\Desktop\IPL\DEMO.png"" width="90%">
+  <img src="DEMO.png" width="90%" alt="IPL Predictor Demo">
+</p>
+
+<p align="center">
+  <i>Real-time IPL win probability prediction interface</i>
 </p>
 
 ---
