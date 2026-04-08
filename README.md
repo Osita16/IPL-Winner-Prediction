@@ -28,7 +28,7 @@ Instead of just training a model, we took it further —
 ## 🖼️ Sneak Peek
 
 <p align="center">
-  <img src="demo.png" width="90%">
+  <img src=""C:\Users\iamos\OneDrive\Desktop\IPL\DEMO.png"" width="90%">
 </p>
 
 ---
