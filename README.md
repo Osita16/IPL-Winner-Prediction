@@ -18,11 +18,11 @@
 This project was developed as part of our **Machine Learning coursework**, where we built a complete **end-to-end prediction system** for IPL match outcomes.
 
 Instead of just training a model, we took it further —
-👉 cleaned real-world data
-👉 built a prediction pipeline
-👉 and deployed it as an interactive web app
+-> cleaned real-world data
+-> built a prediction pipeline
+-> and deployed it as an interactive web app
 
-💡 Because ML projects shouldn’t just stay in notebooks.
+ Because ML projects shouldn’t just stay in notebooks.
 
 ---
 ## 🖼️ Sneak Peek
@@ -105,7 +105,7 @@ streamlit run app.py
 
 ## 👥 Team
 
-This project was built collaboratively as a group ML project 💪
+This project was built collaboratively as a group ML project 
 
 * 👤 MAYANK KUMAR MISHRA
 * 👤 OSITA BHARTI
