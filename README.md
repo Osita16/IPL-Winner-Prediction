@@ -107,10 +107,11 @@ streamlit run app.py
 
 This project was built collaboratively as a group ML project 💪
 
-* 👤 
-* 👤 Member 2
-* 👤 Member 3
-* 👤 Member 4
+* 👤 MAYANK KUMAR MISHRA
+* 👤 OSITA BHARTI
+* 👤 MAHIMA PATEL
+* 👤 ARNAB MUKHAR BISWAS
+* 👤 NIVED KUMAR
 
 ---
 
